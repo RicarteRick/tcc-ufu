@@ -6,9 +6,9 @@ from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 import emoji
 
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
+# nltk.download('stopwords')
+# nltk.download('punkt')
+# nltk.download('wordnet')
 
 # Função para remover emojis
 def remove_emojis(text):
