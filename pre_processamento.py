@@ -1,14 +1,9 @@
 import re
-import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
-import emoji
+from util_files import openFile, saveJsonFile
 
-# nltk.download('stopwords')
-# nltk.download('punkt')
-# nltk.download('wordnet')
 
 # Função para remover emojis
 def remove_emojis(text):
@@ -74,3 +69,20 @@ def preprocess_documents(data):
         preprocessed_documents.append(document)
     
     return preprocessed_documents
+
+def preprocess(docsPath, rawFileName, preprocessedFileName, tokenizedRawFileName):
+    # carregando arquivo
+    rawData = openFile(docsPath+rawFileName)
+
+    # pré-processando
+    preprocessedData = preprocess_documents(rawData)
+
+    # salvando novo arquivo pré-processado
+    saveJsonFile(docsPath+preprocessedFileName, preprocessedData)
+
+    # salvando arquivo sem pré-processamento, mas tokenizado
+    rawData2 = openFile(docsPath+rawFileName)
+    tokenizedRawData = tokenize_file(rawData2)
+    saveJsonFile(docsPath+tokenizedRawFileName, tokenizedRawData)
+
+    print('Documentos salvos')
