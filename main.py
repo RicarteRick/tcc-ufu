@@ -11,7 +11,12 @@ tokenizedRawFileName = 'base_de_treino_raw_tokenizada.json'
 preprocess(docsPath, rawFileName, preprocessedFileName, tokenizedRawFileName)
 
 # Classificadores
-# hold-out
-test_size = 0.3 # 70-30
+# K-folds
+k_folds = 3
+train(docsPath+preprocessedFileName, k_folds)
 
-train(docsPath+preprocessedFileName, test_size)
+k_folds = 5
+train(docsPath+preprocessedFileName, k_folds)
+
+k_folds = 10
+train(docsPath+preprocessedFileName, k_folds)
