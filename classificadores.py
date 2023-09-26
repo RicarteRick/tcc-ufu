@@ -3,125 +3,200 @@ from sklearn.calibration import cross_val_predict, LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
 from sklearn import datasets, linear_model
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
 #region Validacao cruzada
-def execute_naive_bayes(x_train, y_train, k_folds):
+def train_naive_bayes(x_train, y_train):
     nb_classifier = MultinomialNB()
     nb_classifier.fit(x_train, y_train)
 
-    results_nb = cross_val_predict(nb_classifier, x_train, y_train, cv = k_folds)
+    return nb_classifier
 
-    return results_nb
-
-def execute_logistic_regression(x_train, y_train, k_folds):
+def train_logistic_regression(x_train, y_train):
     lr_classifier = LogisticRegression(solver='lbfgs', max_iter=200, random_state=42, multi_class='multinomial')
     lr_classifier.fit(x_train, y_train)
 
-    results_lr = cross_val_predict(lr_classifier, x_train, y_train, cv = k_folds)
+    return lr_classifier
 
-    return results_lr
-
-def execute_SVM(x_train, y_train, k_folds):
+def train_SVM(x_train, y_train):
     svm_classifier = LinearSVC()
     svm_classifier.fit(x_train, y_train)
 
-    results_svm = cross_val_predict(svm_classifier, x_train, y_train, cv = k_folds)
+    return svm_classifier
 
-    return results_svm
-
-def execute_random_forest(x_train, y_train, k_folds):
+def train_random_forest(x_train, y_train):
     rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
     rf_classifier.fit(x_train, y_train)
 
-    results_rf = cross_val_predict(rf_classifier, x_train, y_train, cv = k_folds)
-
-    return results_rf
+    return rf_classifier
 #endregion
 
-def train(filePath, k_folds):
-    # Carregar o arquivo JSON em um DataFrame
-    data = pd.read_json(filePath)
-
-    # Setando os conjuntos de dados e classes
-    x_train = data['TweetContent']
-    y_train = data['IsRelated']
-
-    x_train = [' '.join(tweet) for tweet in x_train]
-
+def vetorize_data(data):
     #CountVectorizer para frequencia
-    vectorize = CountVectorizer()
-    word_count_matrix = vectorize.fit_transform(x_train)
+    vectorizer = CountVectorizer()
+    word_count_matrix = vectorizer.fit_transform(data)
 
     count_list = word_count_matrix.toarray().sum(axis=0)
-    word_list = vectorize.get_feature_names_out()
+    word_list = vectorizer.get_feature_names_out()
 
     word_freq = pd.DataFrame(count_list, index=word_list, columns=['Freq'])
     word_freq.sort_values(by='Freq', ascending=False).head(30)
 
     # TF-IDF
     tfidf_transformer = TfidfTransformer()
-    x_train_tfidf = tfidf_transformer.fit_transform(word_count_matrix)
+    data_tfidf = tfidf_transformer.fit_transform(word_count_matrix)
 
-    # Executando validação cruzada
-    results_nb = execute_naive_bayes(x_train_tfidf, y_train, k_folds)
+    return data_tfidf
 
-    results_lr = execute_logistic_regression(x_train_tfidf, y_train, k_folds)
-
-    results_svm = execute_SVM(x_train_tfidf, y_train, k_folds)
-
-    results_rf = execute_random_forest(x_train_tfidf, y_train, k_folds)
-
-    # Coletando metricas [acuracia, precisao, revocacao]
-    metrics_nb = [accuracy_score(y_train, results_nb),
-                  precision_score(y_train, results_nb), 
-                  recall_score(y_train, results_nb)]
+def get_metrics(y_test, results_nb, results_lr, results_svm, results_rf):
+    metrics_nb = [accuracy_score(y_test, results_nb),
+                  precision_score(y_test, results_nb), 
+                  recall_score(y_test, results_nb)]
     
-    metrics_lr = [accuracy_score(y_train, results_lr),
-                    precision_score(y_train, results_lr),
-                    recall_score(y_train, results_lr)]
+    metrics_lr = [accuracy_score(y_test, results_lr),
+                    precision_score(y_test, results_lr),
+                    recall_score(y_test, results_lr)]
     
-    metrics_svm = [accuracy_score(y_train, results_svm),
-                    precision_score(y_train, results_svm),
-                    recall_score(y_train, results_svm)]
+    metrics_svm = [accuracy_score(y_test, results_svm),
+                    precision_score(y_test, results_svm),
+                    recall_score(y_test, results_svm)]
     
-    metrics_rf = [accuracy_score(y_train, results_rf),
-                    precision_score(y_train, results_rf),
-                    recall_score(y_train, results_rf)]
+    metrics_rf = [accuracy_score(y_test, results_rf),
+                    precision_score(y_test, results_rf),
+                    recall_score(y_test, results_rf)]
     
-    print('\n\n** K-folds: ', k_folds)
+    return metrics_nb, metrics_lr, metrics_svm, metrics_rf
+
+def prediction(data, test_size):
+    all_text_data = data['TweetContent'].apply(lambda tweet: ' '.join(tweet))
+
+    all_data_tfidf = vetorize_data(all_text_data)
+
+    x_train_tfidf, x_test_tfidf, y_train, y_test = train_test_split(all_data_tfidf, data['IsRelated'], test_size=test_size, random_state=42)
+
+    # Executando predicao
+    nb_classifier = train_naive_bayes(x_train_tfidf, y_train)
+    results_nb = nb_classifier.predict(x_test_tfidf)
+
+    lr_classifier = train_logistic_regression(x_train_tfidf, y_train)
+    results_lr = lr_classifier.predict(x_test_tfidf)
+
+    svm_classifier = train_SVM(x_train_tfidf, y_train)
+    results_svm = svm_classifier.predict(x_test_tfidf)
+
+    rf_classifier = train_random_forest(x_train_tfidf, y_train)
+    results_rf = rf_classifier.predict(x_test_tfidf)
+
+    # Calculando metricas
+    metrics_nb, metrics_lr, metrics_svm, metrics_rf = get_metrics(y_test, results_nb, results_lr, results_svm, results_rf)
+
+    confusion_matrix_nb = confusion_matrix(y_test, results_nb)
+    confusion_matrix_lr = confusion_matrix(y_test, results_lr)
+    confusion_matrix_svm = confusion_matrix(y_test, results_svm)
+    confusion_matrix_rf = confusion_matrix(y_test, results_rf)
 
     # Printando metricas
+    print('\n\n** Prediction: Hold-out: ' + str((100-test_size)*100) + ' - ' + str(test_size*100))
+    
     print('\nNaive Bayes')
     print('Acuracia: ', metrics_nb[0])
     print('Precisao: ', metrics_nb[1])
     print('Revocacao: ', metrics_nb[2])
+    print('Matriz de confusao: ')
+    print(confusion_matrix_nb)
 
     print('\nLogistic Regression')
     print('Acuracia: ', metrics_lr[0])
     print('Precisao: ', metrics_lr[1])
     print('Revocacao: ', metrics_lr[2])
+    print('Matriz de confusao: ')
+    print(confusion_matrix_lr)
 
     print('\nSVM')
     print('Acuracia: ', metrics_svm[0])
     print('Precisao: ', metrics_svm[1])
     print('Revocacao: ', metrics_svm[2])
+    print('Matriz de confusao: ')
+    print(confusion_matrix_svm)
 
     print('\nRandom Forest')
     print('Acuracia: ', metrics_rf[0])
     print('Precisao: ', metrics_rf[1])
     print('Revocacao: ', metrics_rf[2])
+    print('Matriz de confusao: ')
+    print(confusion_matrix_rf)
 
-    # Matriz de confusao
-    print('\nMatrizes confusao')
-    print('Naive Bayes')
-    print(pd.crosstab(y_train, results_nb, rownames=['Real'], colnames=['Predito'], margins=True))
+def cross_validation(data, k_folds):
+    # Setando os conjuntos de dados e classes
+    x_train_cv = data['TweetContent']
+    y_train_cv = data['IsRelated']
+
+    x_train_cv = [' '.join(tweet) for tweet in x_train_cv]
+
+    # Matriz TF-IDF
+    x_train_cv_tfidf = vetorize_data(x_train_cv)
+
+    # Executando validação cruzada
+    nb_classifier = train_naive_bayes(x_train_cv_tfidf, y_train_cv)
+    results_nb = cross_val_predict(nb_classifier, x_train_cv_tfidf, y_train_cv, cv = k_folds)
+
+    lr_classifier = train_logistic_regression(x_train_cv_tfidf, y_train_cv)
+    results_lr = cross_val_predict(lr_classifier, x_train_cv_tfidf, y_train_cv, cv = k_folds)
+
+    svm_classifier = train_SVM(x_train_cv_tfidf, y_train_cv)
+    results_svm = cross_val_predict(svm_classifier, x_train_cv_tfidf, y_train_cv, cv = k_folds)
+
+    rf_classifier = train_random_forest(x_train_cv_tfidf, y_train_cv)
+    results_rf = cross_val_predict(rf_classifier, x_train_cv_tfidf, y_train_cv, cv = k_folds)
+
+    # Calculando metricas
+    metrics_nb, metrics_lr, metrics_svm, metrics_rf = get_metrics(y_train_cv, results_nb, results_lr, results_svm, results_rf)
+    
+    confusion_matrix_nb = pd.crosstab(y_train_cv, results_nb, rownames=['Real'], colnames=['Predito'], margins=True)
+    confusion_matrix_lr = pd.crosstab(y_train_cv, results_lr, rownames=['Real'], colnames=['Predito'], margins=True)
+    confusion_matrix_svm = pd.crosstab(y_train_cv, results_svm, rownames=['Real'], colnames=['Predito'], margins=True)
+    confusion_matrix_rf = pd.crosstab(y_train_cv, results_rf, rownames=['Real'], colnames=['Predito'], margins=True)
+
+    # Printando metricas
+    print('\n\n** CV: K-folds: ', k_folds)
+
+    print('\nNaive Bayes')
+    print('Acuracia: ', metrics_nb[0])
+    print('Precisao: ', metrics_nb[1])
+    print('Revocacao: ', metrics_nb[2])
+    print('Matriz de confusao: ')
+    print(confusion_matrix_nb)
+
     print('\nLogistic Regression')
-    print(pd.crosstab(y_train, results_lr, rownames=['Real'], colnames=['Predito'], margins=True))
+    print('Acuracia: ', metrics_lr[0])
+    print('Precisao: ', metrics_lr[1])
+    print('Revocacao: ', metrics_lr[2])
+    print('Matriz de confusao: ')
+    print(confusion_matrix_lr)
+
     print('\nSVM')
-    print(pd.crosstab(y_train, results_svm, rownames=['Real'], colnames=['Predito'], margins=True))
+    print('Acuracia: ', metrics_svm[0])
+    print('Precisao: ', metrics_svm[1])
+    print('Revocacao: ', metrics_svm[2])
+    print('Matriz de confusao: ')
+    print(confusion_matrix_svm)
+
     print('\nRandom Forest')
-    print(pd.crosstab(y_train, results_rf, rownames=['Real'], colnames=['Predito'], margins=True))
+    print('Acuracia: ', metrics_rf[0])
+    print('Precisao: ', metrics_rf[1])
+    print('Revocacao: ', metrics_rf[2])
+    print('Matriz de confusao: ')
+    print(confusion_matrix_rf)
+
+def execute_classifiers(filePath):
+    # Carregar o arquivo JSON em um DataFrame
+    data = pd.read_json(filePath)
+
+    k_folds = 3
+    cross_validation(data, k_folds)
+
+    test_size = 0.3 # 70-30
+    prediction(data, test_size)
