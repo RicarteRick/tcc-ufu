@@ -36,7 +36,7 @@ def train_random_forest(x_train, y_train):
 
 def vetorize_data(data):
     #CountVectorizer para frequencia
-    vectorizer = CountVectorizer()
+    vectorizer = CountVectorizer(max_features=1473)
     word_count_matrix = vectorizer.fit_transform(data)
 
     count_list = word_count_matrix.toarray().sum(axis=0)
@@ -104,37 +104,37 @@ def prediction(data, test_size):
     metrics_rf.append(confusion_matrix_rf)
 
     # Printando metricas
-    print('\n\n** Prediction: Hold-out: ' + str(100-test_size*100) + ' - ' + str(test_size*100))
+    # print('\n\n** Prediction: Hold-out: ' + str(100-test_size*100) + ' - ' + str(test_size*100))
     
-    print('\nNaive Bayes')
-    print('Acuracia: ', metrics_nb[0])
-    print('Precisao: ', metrics_nb[1])
-    print('Revocacao: ', metrics_nb[2])
-    print('Matriz de confusao: ')
-    print(metrics_nb[3])
+    # print('\nNaive Bayes')
+    # print('Acuracia: ', metrics_nb[0])
+    # print('Precisao: ', metrics_nb[1])
+    # print('Revocacao: ', metrics_nb[2])
+    # print('Matriz de confusao: ')
+    # print(metrics_nb[3])
 
-    print('\nLogistic Regression')
-    print('Acuracia: ', metrics_lr[0])
-    print('Precisao: ', metrics_lr[1])
-    print('Revocacao: ', metrics_lr[2])
-    print('Matriz de confusao: ')
-    print(metrics_lr[3])
+    # print('\nLogistic Regression')
+    # print('Acuracia: ', metrics_lr[0])
+    # print('Precisao: ', metrics_lr[1])
+    # print('Revocacao: ', metrics_lr[2])
+    # print('Matriz de confusao: ')
+    # print(metrics_lr[3])
 
-    print('\nSVM')
-    print('Acuracia: ', metrics_svm[0])
-    print('Precisao: ', metrics_svm[1])
-    print('Revocacao: ', metrics_svm[2])
-    print('Matriz de confusao: ')
-    print(metrics_svm[3])
+    # print('\nSVM')
+    # print('Acuracia: ', metrics_svm[0])
+    # print('Precisao: ', metrics_svm[1])
+    # print('Revocacao: ', metrics_svm[2])
+    # print('Matriz de confusao: ')
+    # print(metrics_svm[3])
 
-    print('\nRandom Forest')
-    print('Acuracia: ', metrics_rf[0])
-    print('Precisao: ', metrics_rf[1])
-    print('Revocacao: ', metrics_rf[2])
-    print('Matriz de confusao: ')
-    print(metrics_rf[3])
+    # print('\nRandom Forest')
+    # print('Acuracia: ', metrics_rf[0])
+    # print('Precisao: ', metrics_rf[1])
+    # print('Revocacao: ', metrics_rf[2])
+    # print('Matriz de confusao: ')
+    # print(metrics_rf[3])
 
-    return [metrics_nb, metrics_lr, metrics_svm, metrics_rf]
+    return [metrics_nb, metrics_lr, metrics_svm, metrics_rf], nb_classifier, lr_classifier, svm_classifier, rf_classifier
 
 def cross_validation(data, k_folds):
     # Setando os conjuntos de dados e classes
@@ -173,50 +173,180 @@ def cross_validation(data, k_folds):
     metrics_rf.append(confusion_matrix_rf)
 
     # Printando metricas
-    print('\n\n** CV: K-folds: ', k_folds)
+    # print('\n\n** CV: K-folds: ', k_folds)
 
-    print('\nNaive Bayes')
-    print('Acuracia: ', metrics_nb[0])
-    print('Precisao: ', metrics_nb[1])
-    print('Revocacao: ', metrics_nb[2])
-    print('Matriz de confusao: ')
-    print(metrics_nb[3])
+    # print('\nNaive Bayes')
+    # print('Acuracia: ', metrics_nb[0])
+    # print('Precisao: ', metrics_nb[1])
+    # print('Revocacao: ', metrics_nb[2])
+    # print('Matriz de confusao: ')
+    # print(metrics_nb[3])
 
-    print('\nLogistic Regression')
-    print('Acuracia: ', metrics_lr[0])
-    print('Precisao: ', metrics_lr[1])
-    print('Revocacao: ', metrics_lr[2])
-    print('Matriz de confusao: ')
-    print(metrics_lr[3])
+    # print('\nLogistic Regression')
+    # print('Acuracia: ', metrics_lr[0])
+    # print('Precisao: ', metrics_lr[1])
+    # print('Revocacao: ', metrics_lr[2])
+    # print('Matriz de confusao: ')
+    # print(metrics_lr[3])
 
-    print('\nSVM')
-    print('Acuracia: ', metrics_svm[0])
-    print('Precisao: ', metrics_svm[1])
-    print('Revocacao: ', metrics_svm[2])
-    print('Matriz de confusao: ')
-    print(metrics_svm[3])
+    # print('\nSVM')
+    # print('Acuracia: ', metrics_svm[0])
+    # print('Precisao: ', metrics_svm[1])
+    # print('Revocacao: ', metrics_svm[2])
+    # print('Matriz de confusao: ')
+    # print(metrics_svm[3])
 
-    print('\nRandom Forest')
-    print('Acuracia: ', metrics_rf[0])
-    print('Precisao: ', metrics_rf[1])
-    print('Revocacao: ', metrics_rf[2])
-    print('Matriz de confusao: ')
-    print(metrics_rf[3])
+    # print('\nRandom Forest')
+    # print('Acuracia: ', metrics_rf[0])
+    # print('Precisao: ', metrics_rf[1])
+    # print('Revocacao: ', metrics_rf[2])
+    # print('Matriz de confusao: ')
+    # print(metrics_rf[3])
 
-    return metrics_nb, metrics_lr, metrics_svm, metrics_rf
+    return [metrics_nb, metrics_lr, metrics_svm, metrics_rf], nb_classifier, lr_classifier, svm_classifier, rf_classifier
 
 def execute_classifiers(filePath):
     # Carregar o arquivo JSON em um DataFrame
     data = pd.read_json(filePath)
 
+    #region variaveis
+    predict_train_test_metrics = []
+    train_test_classifiers = []
+    nb_classifiers = []
+    lr_classifiers = []
+    svm_classifiers = []
+    rf_classifiers = []
+
+    predict_cross_validation_metrics = []
+    cross_validation_classifiers = []
+    nb_cv_classifiers = []
+    lr_cv_classifiers = []
+    svm_cv_classifiers = []
+    rf_cv_classifiers = []
+    #endregion
+
     # Predicao train x test
-    predict_70_30_metrics = prediction(data, 0.3) # 70-30
-    predict_80_20_metrics = prediction(data, 0.2) # 80-20
-    predict_90_10_metrics = prediction(data, 0.1) # 90-10
+    predict_70_30_metrics, nb_classifier_70_30, lr_classifier_70_30, svm_classifier_70_30, rf_classifier_70_30 = prediction(data, 0.3) # 70-30
+    predict_80_20_metrics, nb_classifier_80_20, lr_classifier_80_20, svm_classifier_80_20, rf_classifier_80_20 = prediction(data, 0.2) # 80-20
+    predict_90_10_metrics, nb_classifier_90_10, lr_classifier_90_10, svm_classifier_90_10, rf_classifier_90_10 = prediction(data, 0.1) # 90-10
+
+    #region Salvando metricas e classificadores
+    predict_train_test_metrics.append(predict_70_30_metrics)
+    predict_train_test_metrics.append(predict_80_20_metrics)
+    predict_train_test_metrics.append(predict_90_10_metrics)
+
+    nb_classifiers.append(nb_classifier_70_30)
+    nb_classifiers.append(nb_classifier_80_20)
+    nb_classifiers.append(nb_classifier_90_10)
+
+    lr_classifiers.append(lr_classifier_70_30)
+    lr_classifiers.append(lr_classifier_80_20)
+    lr_classifiers.append(lr_classifier_90_10)
+
+    svm_classifiers.append(svm_classifier_70_30)
+    svm_classifiers.append(svm_classifier_80_20)
+    svm_classifiers.append(svm_classifier_90_10)
+
+    rf_classifiers.append(rf_classifier_70_30)
+    rf_classifiers.append(rf_classifier_80_20)
+    rf_classifiers.append(rf_classifier_90_10)
+
+    train_test_classifiers.append(nb_classifiers)
+    train_test_classifiers.append(lr_classifiers)
+    train_test_classifiers.append(svm_classifiers)
+    train_test_classifiers.append(rf_classifiers)
+    #endregion
 
     # Validacao cruzada
-    cv_3_folds_metrics = cross_validation(data, 3)
-    cv_5_folds_metrics = cross_validation(data, 5)
-    cv_10_folds_metrics = cross_validation(data, 10)
+    cv_3_folds_metrics, nb_classifier_cv_3, lr_classifier_cv_3, svm_classifier_cv_3, rf_classifier_cv_3 = cross_validation(data, 3)
+    cv_5_folds_metrics, nb_classifier_cv_5, lr_classifier_cv_5, svm_classifier_cv_5, rf_classifier_cv_5 = cross_validation(data, 5)
+    cv_10_folds_metrics, nb_classifier_cv_10, lr_classifier_cv_10, svm_classifier_cv_10, rf_classifier_cv_10 = cross_validation(data, 10)
 
-    return predict_70_30_metrics, predict_80_20_metrics, predict_90_10_metrics, cv_3_folds_metrics, cv_5_folds_metrics, cv_10_folds_metrics
+    #region Salvando metricas e classificadores CV
+    predict_cross_validation_metrics.append(cv_3_folds_metrics)
+    predict_cross_validation_metrics.append(cv_5_folds_metrics)
+    predict_cross_validation_metrics.append(cv_10_folds_metrics)
+
+    nb_cv_classifiers.append(nb_classifier_cv_3)
+    nb_cv_classifiers.append(nb_classifier_cv_5)
+    nb_cv_classifiers.append(nb_classifier_cv_10)
+
+    lr_cv_classifiers.append(lr_classifier_cv_3)
+    lr_cv_classifiers.append(lr_classifier_cv_5)
+    lr_cv_classifiers.append(lr_classifier_cv_10)
+
+    svm_cv_classifiers.append(svm_classifier_cv_3)
+    svm_cv_classifiers.append(svm_classifier_cv_5)
+    svm_cv_classifiers.append(svm_classifier_cv_10)
+    
+    rf_cv_classifiers.append(rf_classifier_cv_3)
+    rf_cv_classifiers.append(rf_classifier_cv_5)
+    rf_cv_classifiers.append(rf_classifier_cv_10)
+
+    cross_validation_classifiers.append(nb_cv_classifiers)
+    cross_validation_classifiers.append(lr_cv_classifiers)
+    cross_validation_classifiers.append(svm_cv_classifiers)
+    cross_validation_classifiers.append(rf_cv_classifiers)
+    #endregion
+
+    return predict_train_test_metrics, predict_cross_validation_metrics, train_test_classifiers, cross_validation_classifiers
+
+def test_data(filePath, train_test_classifiers, cross_validation_classifiers):
+    data = pd.read_json(filePath)
+
+    results_nb = []
+    results_lr = []
+    results_svm = []
+    results_rf = []
+
+    #region Extraindo variaveis
+    nb_classifiers = train_test_classifiers[0]
+    lr_classifiers = train_test_classifiers[1]
+    svm_classifiers = train_test_classifiers[2]
+    rf_classifiers = train_test_classifiers[3]
+
+    nb_cv_classifiers = cross_validation_classifiers[0]
+    lr_cv_classifiers = cross_validation_classifiers[1]
+    svm_cv_classifiers = cross_validation_classifiers[2]
+    rf_cv_classifiers = cross_validation_classifiers[3]
+    #endregion
+
+    all_text_data = data['TweetContent'].apply(lambda tweet: ' '.join(tweet))
+    all_data_tfidf = vetorize_data(all_text_data)
+
+    # Aplicar predicao nos classificadores treinados
+    #region Predicao train x test
+    results_nb_70_30 = nb_classifiers[0].predict(all_data_tfidf)
+    results_nb_80_20 = nb_classifiers[1].predict(all_data_tfidf)
+    results_nb_90_10 = nb_classifiers[2].predict(all_data_tfidf)
+
+    results_lr_70_30 = lr_classifiers[0].predict(all_data_tfidf)
+    results_lr_80_20 = lr_classifiers[1].predict(all_data_tfidf)
+    results_lr_90_10 = lr_classifiers[2].predict(all_data_tfidf)
+
+    results_svm_70_30 = svm_classifiers[0].predict(all_data_tfidf)
+    results_svm_80_20 = svm_classifiers[1].predict(all_data_tfidf)
+    results_svm_90_10 = svm_classifiers[2].predict(all_data_tfidf)
+
+    results_rf_70_30 = rf_classifiers[0].predict(all_data_tfidf)
+    results_rf_80_20 = rf_classifiers[1].predict(all_data_tfidf)
+    results_rf_90_10 = rf_classifiers[2].predict(all_data_tfidf)
+
+    results_nb.append(results_nb_70_30)
+    results_nb.append(results_nb_80_20)
+    results_nb.append(results_nb_90_10)
+
+    results_lr.append(results_lr_70_30)
+    results_lr.append(results_lr_80_20)
+    results_lr.append(results_lr_90_10)
+
+    results_svm.append(results_svm_70_30)
+    results_svm.append(results_svm_80_20)
+    results_svm.append(results_svm_90_10)
+
+    results_rf.append(results_rf_70_30)
+    results_rf.append(results_rf_80_20)
+    results_rf.append(results_rf_90_10)
+    #endregion
+
+    return results_nb, results_lr, results_svm, results_rf, all_text_data
