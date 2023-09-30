@@ -1,0 +1,20 @@
+Classificador;Acuracia;Precisao;Revocacao
+Naive Bayes;0.7857142857142857;0.7727272727272727;1.0
+Matriz de confusao
+[[ 4 15]
+ [ 0 51]]
+
+Logistic Regression;0.8571428571428571;0.8360655737704918;1.0
+Matriz de confusao
+[[ 9 10]
+ [ 0 51]]
+
+SVM;0.9;0.8928571428571429;0.9803921568627451
+Matriz de confusao
+[[13  6]
+ [ 1 50]]
+
+Random Forest;0.8857142857142857;0.864406779661017;1.0
+Matriz de confusao
+[[11  8]
+ [ 0 51]]

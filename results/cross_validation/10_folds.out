@@ -1,0 +1,32 @@
+Classificador;Acuracia;Precisao;Revocacao
+Naive Bayes;0.8042857142857143;0.8023774145616642;0.9926470588235294
+Matriz de confusao
+Predito   0    1  All
+Real                 
+0        23  133  156
+1         4  540  544
+All      27  673  700
+
+Logistic Regression;0.8342857142857143;0.8252279635258358;0.9981617647058824
+Matriz de confusao
+Predito   0    1  All
+Real                 
+0        41  115  156
+1         1  543  544
+All      42  658  700
+
+SVM;0.8542857142857143;0.867109634551495;0.9595588235294118
+Matriz de confusao
+Predito   0    1  All
+Real                 
+0        76   80  156
+1        22  522  544
+All      98  602  700
+
+Random Forest;0.8457142857142858;0.841692789968652;0.9871323529411765
+Matriz de confusao
+Predito   0    1  All
+Real                 
+0        55  101  156
+1         7  537  544
+All      62  638  700

@@ -68,7 +68,7 @@ def get_metrics(y_test, results_nb, results_lr, results_svm, results_rf):
                     precision_score(y_test, results_rf),
                     recall_score(y_test, results_rf)]
     
-    return metrics_nb, metrics_lr, metrics_svm, metrics_rf
+    return [metrics_nb, metrics_lr, metrics_svm, metrics_rf]
 
 def prediction(data, test_size):
     all_text_data = data['TweetContent'].apply(lambda tweet: ' '.join(tweet))
@@ -98,36 +98,43 @@ def prediction(data, test_size):
     confusion_matrix_svm = confusion_matrix(y_test, results_svm)
     confusion_matrix_rf = confusion_matrix(y_test, results_rf)
 
+    metrics_nb.append(confusion_matrix_nb)
+    metrics_lr.append(confusion_matrix_lr)
+    metrics_svm.append(confusion_matrix_svm)
+    metrics_rf.append(confusion_matrix_rf)
+
     # Printando metricas
-    print('\n\n** Prediction: Hold-out: ' + str((100-test_size)*100) + ' - ' + str(test_size*100))
+    print('\n\n** Prediction: Hold-out: ' + str(100-test_size*100) + ' - ' + str(test_size*100))
     
     print('\nNaive Bayes')
     print('Acuracia: ', metrics_nb[0])
     print('Precisao: ', metrics_nb[1])
     print('Revocacao: ', metrics_nb[2])
     print('Matriz de confusao: ')
-    print(confusion_matrix_nb)
+    print(metrics_nb[3])
 
     print('\nLogistic Regression')
     print('Acuracia: ', metrics_lr[0])
     print('Precisao: ', metrics_lr[1])
     print('Revocacao: ', metrics_lr[2])
     print('Matriz de confusao: ')
-    print(confusion_matrix_lr)
+    print(metrics_lr[3])
 
     print('\nSVM')
     print('Acuracia: ', metrics_svm[0])
     print('Precisao: ', metrics_svm[1])
     print('Revocacao: ', metrics_svm[2])
     print('Matriz de confusao: ')
-    print(confusion_matrix_svm)
+    print(metrics_svm[3])
 
     print('\nRandom Forest')
     print('Acuracia: ', metrics_rf[0])
     print('Precisao: ', metrics_rf[1])
     print('Revocacao: ', metrics_rf[2])
     print('Matriz de confusao: ')
-    print(confusion_matrix_rf)
+    print(metrics_rf[3])
+
+    return [metrics_nb, metrics_lr, metrics_svm, metrics_rf]
 
 def cross_validation(data, k_folds):
     # Setando os conjuntos de dados e classes
@@ -160,6 +167,11 @@ def cross_validation(data, k_folds):
     confusion_matrix_svm = pd.crosstab(y_train_cv, results_svm, rownames=['Real'], colnames=['Predito'], margins=True)
     confusion_matrix_rf = pd.crosstab(y_train_cv, results_rf, rownames=['Real'], colnames=['Predito'], margins=True)
 
+    metrics_nb.append(confusion_matrix_nb)
+    metrics_lr.append(confusion_matrix_lr)
+    metrics_svm.append(confusion_matrix_svm)
+    metrics_rf.append(confusion_matrix_rf)
+
     # Printando metricas
     print('\n\n** CV: K-folds: ', k_folds)
 
@@ -168,35 +180,43 @@ def cross_validation(data, k_folds):
     print('Precisao: ', metrics_nb[1])
     print('Revocacao: ', metrics_nb[2])
     print('Matriz de confusao: ')
-    print(confusion_matrix_nb)
+    print(metrics_nb[3])
 
     print('\nLogistic Regression')
     print('Acuracia: ', metrics_lr[0])
     print('Precisao: ', metrics_lr[1])
     print('Revocacao: ', metrics_lr[2])
     print('Matriz de confusao: ')
-    print(confusion_matrix_lr)
+    print(metrics_lr[3])
 
     print('\nSVM')
     print('Acuracia: ', metrics_svm[0])
     print('Precisao: ', metrics_svm[1])
     print('Revocacao: ', metrics_svm[2])
     print('Matriz de confusao: ')
-    print(confusion_matrix_svm)
+    print(metrics_svm[3])
 
     print('\nRandom Forest')
     print('Acuracia: ', metrics_rf[0])
     print('Precisao: ', metrics_rf[1])
     print('Revocacao: ', metrics_rf[2])
     print('Matriz de confusao: ')
-    print(confusion_matrix_rf)
+    print(metrics_rf[3])
+
+    return metrics_nb, metrics_lr, metrics_svm, metrics_rf
 
 def execute_classifiers(filePath):
     # Carregar o arquivo JSON em um DataFrame
     data = pd.read_json(filePath)
 
-    k_folds = 3
-    cross_validation(data, k_folds)
+    # Predicao train x test
+    predict_70_30_metrics = prediction(data, 0.3) # 70-30
+    predict_80_20_metrics = prediction(data, 0.2) # 80-20
+    predict_90_10_metrics = prediction(data, 0.1) # 90-10
 
-    test_size = 0.3 # 70-30
-    prediction(data, test_size)
+    # Validacao cruzada
+    cv_3_folds_metrics = cross_validation(data, 3)
+    cv_5_folds_metrics = cross_validation(data, 5)
+    cv_10_folds_metrics = cross_validation(data, 10)
+
+    return predict_70_30_metrics, predict_80_20_metrics, predict_90_10_metrics, cv_3_folds_metrics, cv_5_folds_metrics, cv_10_folds_metrics
