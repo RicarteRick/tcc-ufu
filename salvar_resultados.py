@@ -145,3 +145,36 @@ def save_predicts_train_test(results_nb, results_lr, results_svm, results_rf, al
     predicts_rf_70_30_df.to_csv(predicts_train_test_path+'rf_70_30.csv', index=False)
     predicts_rf_80_20_df.to_csv(predicts_train_test_path+'rf_80_20.csv', index=False)
     predicts_rf_90_10_df.to_csv(predicts_train_test_path+'rf_90_10.csv', index=False)
+
+def save_predicts_cross_validation(results_cv_nb, results_cv_lr, results_cv_svm, results_cv_rf, all_text_data, predicts_cross_validation_path):
+    predicts_cv_nb_3_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_nb[0]})
+    predicts_cv_nb_5_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_nb[1]})
+    predicts_cv_nb_10_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_nb[2]})
+
+    predicts_cv_lr_3_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_lr[0]})
+    predicts_cv_lr_5_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_lr[1]})
+    predicts_cv_lr_10_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_lr[2]})
+
+    predicts_cv_svm_3_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_svm[0]})
+    predicts_cv_svm_5_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_svm[1]})
+    predicts_cv_svm_10_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_svm[2]})
+
+    predicts_cv_rf_3_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_rf[0]})
+    predicts_cv_rf_5_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_rf[1]})
+    predicts_cv_rf_10_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_rf[2]})
+
+    predicts_cv_nb_3_df.to_csv(predicts_cross_validation_path+'nb_3.csv', index=False)
+    predicts_cv_nb_5_df.to_csv(predicts_cross_validation_path+'nb_5.csv', index=False)
+    predicts_cv_nb_10_df.to_csv(predicts_cross_validation_path+'nb_10.csv', index=False)
+
+    predicts_cv_lr_3_df.to_csv(predicts_cross_validation_path+'lr_3.csv', index=False)
+    predicts_cv_lr_5_df.to_csv(predicts_cross_validation_path+'lr_5.csv', index=False)
+    predicts_cv_lr_10_df.to_csv(predicts_cross_validation_path+'lr_10.csv', index=False)
+
+    predicts_cv_svm_3_df.to_csv(predicts_cross_validation_path+'svm_3.csv', index=False)
+    predicts_cv_svm_5_df.to_csv(predicts_cross_validation_path+'svm_5.csv', index=False)
+    predicts_cv_svm_10_df.to_csv(predicts_cross_validation_path+'svm_10.csv', index=False)
+
+    predicts_cv_rf_3_df.to_csv(predicts_cross_validation_path+'rf_3.csv', index=False)
+    predicts_cv_rf_5_df.to_csv(predicts_cross_validation_path+'rf_5.csv', index=False)
+    predicts_cv_rf_10_df.to_csv(predicts_cross_validation_path+'rf_10.csv', index=False)

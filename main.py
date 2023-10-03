@@ -1,6 +1,6 @@
 from pre_processamento import preprocess
 from classificadores import execute_classifiers, test_data
-from salvar_resultados import save_results_train_test, save_results_cross_validation, save_predicts_train_test
+from salvar_resultados import save_results_train_test, save_results_cross_validation, save_predicts_train_test, save_predicts_cross_validation
 
 # Paths
 docs_path = 'docs/'
@@ -29,12 +29,13 @@ tokenized_raw_test_file_name = 'base_de_teste_raw_tokenizada.json'
 # ** cross_validation_classifiers -> [nb[3, 5, 10], lr[3, 5, 10], svm[3, 5, 10], rf[3, 5, 10]]
 predict_train_test_metrics, predict_cross_validation_metrics, train_test_classifiers, cross_validation_classifiers = execute_classifiers(docs_path+preprocessed_file_name)
 
-# Salvando resultados
+# Salvando resultados (metricas, matriz de confusao)
 save_results_train_test(results_train_test_path, predict_train_test_metrics)
 save_results_cross_validation(results_cross_validation_path, predict_cross_validation_metrics)
 
 # Testando classificadores com base de teste
-results_nb, results_lr, results_svm, results_rf, all_text_test_data = test_data(docs_path+preprocessed_test_file_name, train_test_classifiers, cross_validation_classifiers)
+results_nb, results_lr, results_svm, results_rf, results_cv_nb, results_cv_lr, results_cv_svm, results_cv_rf, all_text_test_data = test_data(docs_path+preprocessed_test_file_name, train_test_classifiers, cross_validation_classifiers)
 
 # Salvando predicoes da base de teste
 save_predicts_train_test(results_nb, results_lr, results_svm, results_rf, all_text_test_data, predicts_train_test_path)
+save_predicts_cross_validation(results_cv_nb, results_cv_lr, results_cv_svm, results_cv_rf, all_text_test_data, predicts_cross_validation_path)

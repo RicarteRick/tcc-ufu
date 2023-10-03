@@ -299,6 +299,11 @@ def test_data(filePath, train_test_classifiers, cross_validation_classifiers):
     results_svm = []
     results_rf = []
 
+    results_cv_nb = []
+    results_cv_lr = []
+    results_cv_svm = []
+    results_cv_rf = []
+
     #region Extraindo variaveis
     nb_classifiers = train_test_classifiers[0]
     lr_classifiers = train_test_classifiers[1]
@@ -349,4 +354,38 @@ def test_data(filePath, train_test_classifiers, cross_validation_classifiers):
     results_rf.append(results_rf_90_10)
     #endregion
 
-    return results_nb, results_lr, results_svm, results_rf, all_text_data
+    #region Predicao cross validation
+    results_nb_cv_3 = nb_cv_classifiers[0].predict(all_data_tfidf)
+    results_nb_cv_5 = nb_cv_classifiers[1].predict(all_data_tfidf)
+    results_nb_cv_10 = nb_cv_classifiers[2].predict(all_data_tfidf)
+
+    results_lr_cv_3 = lr_cv_classifiers[0].predict(all_data_tfidf)
+    results_lr_cv_5 = lr_cv_classifiers[1].predict(all_data_tfidf)
+    results_lr_cv_10 = lr_cv_classifiers[2].predict(all_data_tfidf)
+
+    results_svm_cv_3 = svm_cv_classifiers[0].predict(all_data_tfidf)
+    results_svm_cv_5 = svm_cv_classifiers[1].predict(all_data_tfidf)
+    results_svm_cv_10 = svm_cv_classifiers[2].predict(all_data_tfidf)
+
+    results_rf_cv_3 = rf_cv_classifiers[0].predict(all_data_tfidf)
+    results_rf_cv_5 = rf_cv_classifiers[1].predict(all_data_tfidf)
+    results_rf_cv_10 = rf_cv_classifiers[2].predict(all_data_tfidf)
+
+    results_cv_nb.append(results_nb_cv_3)
+    results_cv_nb.append(results_nb_cv_5)
+    results_cv_nb.append(results_nb_cv_10)
+
+    results_cv_lr.append(results_lr_cv_3)
+    results_cv_lr.append(results_lr_cv_5)
+    results_cv_lr.append(results_lr_cv_10)
+
+    results_cv_svm.append(results_svm_cv_3)
+    results_cv_svm.append(results_svm_cv_5)
+    results_cv_svm.append(results_svm_cv_10)
+
+    results_cv_rf.append(results_rf_cv_3)
+    results_cv_rf.append(results_rf_cv_5)
+    results_cv_rf.append(results_rf_cv_10)
+    #endregion
+
+    return results_nb, results_lr, results_svm, results_rf, results_cv_nb, results_cv_lr, results_cv_svm, results_cv_rf, all_text_data
