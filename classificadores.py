@@ -35,7 +35,7 @@ def train_random_forest(x_train, y_train):
 #endregion
 
 def vetorize_data(data):
-    #CountVectorizer para frequencia
+    # CountVectorizer para frequencia
     vectorizer = CountVectorizer(max_features=1473)
     word_count_matrix = vectorizer.fit_transform(data)
 

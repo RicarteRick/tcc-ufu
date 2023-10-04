@@ -1,4 +1,4 @@
-from pre_processamento import preprocess
+from pre_processamento import preprocess, generate_word_cloud, generate_pareto_chart
 from classificadores import execute_classifiers, test_data
 from salvar_resultados import save_results_train_test, save_results_cross_validation, save_predicts_train_test, save_predicts_cross_validation
 
@@ -19,8 +19,12 @@ preprocessed_test_file_name = 'base_de_teste_pre_processada.json'
 tokenized_raw_test_file_name = 'base_de_teste_raw_tokenizada.json'
 
 # Pre-processamento
-# preprocess(docs_path, raw_file_name, preprocessed_file_name, tokenized_raw_file_name)
-# preprocess(docs_path, raw_test_file_name, preprocessed_test_file_name, tokenized_raw_test_file_name)
+preprocess(docs_path, raw_file_name, preprocessed_file_name, tokenized_raw_file_name)
+preprocess(docs_path, raw_test_file_name, preprocessed_test_file_name, tokenized_raw_test_file_name)
+
+# Word Cloud e grafico de pareto da base geral
+generate_word_cloud(docs_path, tokenized_raw_test_file_name, preprocessed_test_file_name)
+generate_pareto_chart(docs_path, tokenized_raw_test_file_name, preprocessed_test_file_name)
 
 # Classificadores
 # ** predict_train_test_metrics -> [70-30, 80-20, 90-10]
