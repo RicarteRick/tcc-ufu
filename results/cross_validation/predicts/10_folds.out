@@ -1,0 +1,5 @@
+Classificador;Relacionados;Nao-Relacionados
+Naive Bayes;2261;369
+Logistic Regression;2459;171
+SVM;2031;599
+Random Forest;2437;193

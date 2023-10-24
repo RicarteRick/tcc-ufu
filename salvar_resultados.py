@@ -130,6 +130,51 @@ def save_predicts_train_test(results_nb, results_lr, results_svm, results_rf, al
     predicts_rf_80_20_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_rf[1]})
     predicts_rf_90_10_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_rf[2]})
 
+    # contar quantos são relacionados e quantos não são relacionados em cada um dos arquivos
+    related_and_not_related_70_30 = {
+        'nb': predicts_nb_70_30_df['IsRelated'].value_counts(),
+        'lr': predicts_lr_70_30_df['IsRelated'].value_counts(),
+        'svm': predicts_svm_70_30_df['IsRelated'].value_counts(),
+        'rf': predicts_rf_70_30_df['IsRelated'].value_counts()
+    }
+
+    related_and_not_related_80_20 = {
+        'nb': predicts_nb_80_20_df['IsRelated'].value_counts(),
+        'lr': predicts_lr_80_20_df['IsRelated'].value_counts(),
+        'svm': predicts_svm_80_20_df['IsRelated'].value_counts(),
+        'rf': predicts_rf_80_20_df['IsRelated'].value_counts()
+    }
+
+    related_and_not_related_90_10 = {
+        'nb': predicts_nb_90_10_df['IsRelated'].value_counts(),
+        'lr': predicts_lr_90_10_df['IsRelated'].value_counts(),
+        'svm': predicts_svm_90_10_df['IsRelated'].value_counts(),
+        'rf': predicts_rf_90_10_df['IsRelated'].value_counts()
+    }
+
+    # salvar em um arquivo para cada hold-out
+    header_line = f"Classificador;Relacionados;Nao-Relacionados\n"
+    with open(predicts_train_test_path+'70_30.out', 'w') as output_file:
+        output_file.write(header_line)
+        output_file.write(f"Naive Bayes;{related_and_not_related_70_30['nb'][1]};{related_and_not_related_70_30['nb'][0]}\n")
+        output_file.write(f"Logistic Regression;{related_and_not_related_70_30['lr'][1]};{related_and_not_related_70_30['lr'][0]}\n")
+        output_file.write(f"SVM;{related_and_not_related_70_30['svm'][1]};{related_and_not_related_70_30['svm'][0]}\n")
+        output_file.write(f"Random Forest;{related_and_not_related_70_30['rf'][1]};{related_and_not_related_70_30['rf'][0]}\n")
+        
+    with open(predicts_train_test_path+'80_20.out', 'w') as output_file:
+        output_file.write(header_line)
+        output_file.write(f"Naive Bayes;{related_and_not_related_80_20['nb'][1]};{related_and_not_related_80_20['nb'][0]}\n")
+        output_file.write(f"Logistic Regression;{related_and_not_related_80_20['lr'][1]};{related_and_not_related_80_20['lr'][0]}\n")
+        output_file.write(f"SVM;{related_and_not_related_80_20['svm'][1]};{related_and_not_related_80_20['svm'][0]}\n")
+        output_file.write(f"Random Forest;{related_and_not_related_80_20['rf'][1]};{related_and_not_related_80_20['rf'][0]}\n")
+
+    with open(predicts_train_test_path+'90_10.out', 'w') as output_file:
+        output_file.write(header_line)
+        output_file.write(f"Naive Bayes;{related_and_not_related_90_10['nb'][1]};{related_and_not_related_90_10['nb'][0]}\n")
+        output_file.write(f"Logistic Regression;{related_and_not_related_90_10['lr'][1]};{related_and_not_related_90_10['lr'][0]}\n")
+        output_file.write(f"SVM;{related_and_not_related_90_10['svm'][1]};{related_and_not_related_90_10['svm'][0]}\n")
+        output_file.write(f"Random Forest;{related_and_not_related_90_10['rf'][1]};{related_and_not_related_90_10['rf'][0]}\n")
+
     predicts_nb_70_30_df.to_csv(predicts_train_test_path+'nb_70_30.csv', index=False)
     predicts_nb_80_20_df.to_csv(predicts_train_test_path+'nb_80_20.csv', index=False)
     predicts_nb_90_10_df.to_csv(predicts_train_test_path+'nb_90_10.csv', index=False)
@@ -162,6 +207,51 @@ def save_predicts_cross_validation(results_cv_nb, results_cv_lr, results_cv_svm,
     predicts_cv_rf_3_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_rf[0]})
     predicts_cv_rf_5_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_rf[1]})
     predicts_cv_rf_10_df = pd.DataFrame({'Content': all_text_data, 'IsRelated': results_cv_rf[2]})
+
+    # contar quantos são relacionados e quantos não são relacionados em cada um dos arquivos
+    related_and_not_related_70_30 = {
+        'nb': predicts_cv_nb_3_df['IsRelated'].value_counts(),
+        'lr': predicts_cv_lr_3_df['IsRelated'].value_counts(),
+        'svm': predicts_cv_svm_3_df['IsRelated'].value_counts(),
+        'rf': predicts_cv_rf_3_df['IsRelated'].value_counts()
+    }
+
+    related_and_not_related_80_20 = {
+        'nb': predicts_cv_nb_5_df['IsRelated'].value_counts(),
+        'lr': predicts_cv_lr_5_df['IsRelated'].value_counts(),
+        'svm': predicts_cv_svm_5_df['IsRelated'].value_counts(),
+        'rf': predicts_cv_rf_5_df['IsRelated'].value_counts()
+    }
+
+    related_and_not_related_90_10 = {
+        'nb': predicts_cv_nb_10_df['IsRelated'].value_counts(),
+        'lr': predicts_cv_lr_10_df['IsRelated'].value_counts(),
+        'svm': predicts_cv_svm_10_df['IsRelated'].value_counts(),
+        'rf': predicts_cv_rf_10_df['IsRelated'].value_counts()
+    }
+
+    # salvar em um arquivo para cada hold-out
+    header_line = f"Classificador;Relacionados;Nao-Relacionados\n"
+    with open(predicts_cross_validation_path+'3_folds.out', 'w') as output_file:
+        output_file.write(header_line)
+        output_file.write(f"Naive Bayes;{related_and_not_related_70_30['nb'][1]};{related_and_not_related_70_30['nb'][0]}\n")
+        output_file.write(f"Logistic Regression;{related_and_not_related_70_30['lr'][1]};{related_and_not_related_70_30['lr'][0]}\n")
+        output_file.write(f"SVM;{related_and_not_related_70_30['svm'][1]};{related_and_not_related_70_30['svm'][0]}\n")
+        output_file.write(f"Random Forest;{related_and_not_related_70_30['rf'][1]};{related_and_not_related_70_30['rf'][0]}\n")
+        
+    with open(predicts_cross_validation_path+'5_folds.out', 'w') as output_file:
+        output_file.write(header_line)
+        output_file.write(f"Naive Bayes;{related_and_not_related_80_20['nb'][1]};{related_and_not_related_80_20['nb'][0]}\n")
+        output_file.write(f"Logistic Regression;{related_and_not_related_80_20['lr'][1]};{related_and_not_related_80_20['lr'][0]}\n")
+        output_file.write(f"SVM;{related_and_not_related_80_20['svm'][1]};{related_and_not_related_80_20['svm'][0]}\n")
+        output_file.write(f"Random Forest;{related_and_not_related_80_20['rf'][1]};{related_and_not_related_80_20['rf'][0]}\n")
+
+    with open(predicts_cross_validation_path+'10_folds.out', 'w') as output_file:
+        output_file.write(header_line)
+        output_file.write(f"Naive Bayes;{related_and_not_related_90_10['nb'][1]};{related_and_not_related_90_10['nb'][0]}\n")
+        output_file.write(f"Logistic Regression;{related_and_not_related_90_10['lr'][1]};{related_and_not_related_90_10['lr'][0]}\n")
+        output_file.write(f"SVM;{related_and_not_related_90_10['svm'][1]};{related_and_not_related_90_10['svm'][0]}\n")
+        output_file.write(f"Random Forest;{related_and_not_related_90_10['rf'][1]};{related_and_not_related_90_10['rf'][0]}\n")
 
     predicts_cv_nb_3_df.to_csv(predicts_cross_validation_path+'nb_3.csv', index=False)
     predicts_cv_nb_5_df.to_csv(predicts_cross_validation_path+'nb_5.csv', index=False)

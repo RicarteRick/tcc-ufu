@@ -14,7 +14,7 @@ raw_file_name = 'base_de_treino.json'
 preprocessed_file_name = 'base_de_treino_pre_processada.json'
 tokenized_raw_file_name = 'base_de_treino_raw_tokenizada.json'
 
-raw_test_file_name = 'geral_sem_duplicatas.json'
+raw_test_file_name = 'base_de_teste.json'
 preprocessed_test_file_name = 'base_de_teste_pre_processada.json'
 tokenized_raw_test_file_name = 'base_de_teste_raw_tokenizada.json'
 
