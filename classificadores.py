@@ -8,7 +8,7 @@ from sklearn import datasets, linear_model
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
-#region Validacao cruzada
+#region Criacao dos classificadores
 def train_naive_bayes(x_train, y_train):
     nb_classifier = MultinomialNB()
     nb_classifier.fit(x_train, y_train)
@@ -39,11 +39,13 @@ def vetorize_data(data):
     vectorizer = CountVectorizer(max_features=1473)
     word_count_matrix = vectorizer.fit_transform(data)
 
+    # region frequencia de palavras
     count_list = word_count_matrix.toarray().sum(axis=0)
     word_list = vectorizer.get_feature_names_out()
 
     word_freq = pd.DataFrame(count_list, index=word_list, columns=['Freq'])
     word_freq.sort_values(by='Freq', ascending=False).head(30)
+    # endregion
 
     # TF-IDF
     tfidf_transformer = TfidfTransformer()
